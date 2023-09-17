@@ -1,0 +1,29 @@
+-- tables
+select * from finance_1;
+select * from finance_2;
+SELECT COUNT(*) FROM finance_1;
+SELECT COUNT(*) FROM finance_2;
+
+-- KPI_1 (year_wise loan amount)
+select year(issue_d), sum(loan_amnt) from finance_1 group by year(issue_d) order by year(issue_d);
+
+-- KPI_2 (grade and sub-grade wise revol_bal)
+select grade, sub_grade, sum(revol_bal) from finance_1 inner join finance_2 on finance_1.id = finance_2.id 
+group by grade, sub_grade order by grade, sub_grade;
+
+-- KPI_3 (total payment for verified status vs total payment for non-verified status)
+select verification_status, round(sum(total_pymnt),2) from finance_1 inner join finance_2 on finance_1.id = finance_2.id 
+group by verification_status;
+
+-- KPI_4 (state wise and month wise loan_status)
+select addr_state as state, date_format(issue_d, '%b') as month_, loan_status from finance_1 inner join finance_2 on finance_1.id = finance_2.id
+order by state, month_;
+
+create view state as select addr_state as state, date_format(issue_d, '%b') as month_, loan_status from finance_1 inner join finance_2 on finance_1.id = finance_2.id
+order by state, month_;
+
+select * from state;
+
+-- KPI_5 (home_ownership vs last_payment_date stats)
+select home_ownership, count(last_pymnt_d) from finance_1 inner join finance_2 on finance_1.id = finance_2.id
+group by home_ownership;
